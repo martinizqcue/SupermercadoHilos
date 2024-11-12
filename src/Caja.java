@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class Caja {
+public class Caja implements Runnable { // Caja implementa Runnable
     private String nombreCaja;
     private List<Cliente> clientes;
     private long initialTime;
@@ -11,7 +11,7 @@ public class Caja {
         this.initialTime = initialTime;
     }
 
-
+    @Override // Sobrescribimos el método run()
     public void run() {
         for (Cliente cliente : clientes) {
             procesarCliente(cliente);
@@ -41,3 +41,4 @@ public class Caja {
         }
     }
 }
+
