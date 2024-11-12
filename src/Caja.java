@@ -1,19 +1,34 @@
 import java.util.List;
 
-public class Caja implements Runnable { // Caja implementa Runnable
+public class Caja implements Runnable {
     private String nombreCaja;
-    private List<Cliente> clientes;
+    private List<Cliente> clientes; //Lista compartida de clientes
+    private Object lock; //Objeto para sincronización
     private long initialTime;
 
-    public Caja(String nombreCaja, List<Cliente> clientes, long initialTime) {
+    public Caja(String nombreCaja, List<Cliente> clientes, Object lock, long initialTime) {
         this.nombreCaja = nombreCaja;
         this.clientes = clientes;
+        this.lock = lock;
         this.initialTime = initialTime;
     }
 
-    @Override // Sobrescribimos el método run()
+    @Override
     public void run() {
-        for (Cliente cliente : clientes) {
+        while (true) {
+            Cliente cliente = null;
+
+            synchronized (lock) {
+                if (!clientes.isEmpty()) {
+                    cliente = clientes.remove(0);
+                }
+            }
+
+            if (cliente == null) {
+
+                break;
+            }
+
             procesarCliente(cliente);
         }
     }
@@ -35,10 +50,12 @@ public class Caja implements Runnable { // Caja implementa Runnable
                 " del cliente " + cliente.getNombre());
 
         try {
-            Thread.sleep(1000); // Simulamos tiempo de procesamiento
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     }
 }
+
+
 
